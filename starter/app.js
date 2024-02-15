@@ -1,5 +1,5 @@
 require("dotenv").config();
-require ('express-async-errors')//ya3mel l fct qui gere les erreurs 
+require ('express-async-errors')//ya3mel les fct qui gere les erreurs 
 
 const express = require("express");
 const app = express();
