@@ -22,23 +22,28 @@ const getAllProducts = async (req, res) => {
     queryObject.name = { $regex: name, $options: "i" }; // a verifier
   }
 
-if(numericFilters){
-  const operatorMap = {
-    '>':'$gt',
-    '>=':'$gte',
-    '=':'$eq',
-    '<':'$lt',
-    '<=':'$lte',
-  }//permet de chercher les operateurs de comparaison dans une chaine de caractere 
-  const regEx = /\b(<|>|<=|>=|=)\b/g
-  let filters= numericFilters.replace(regEx, (match)=>
-    `-${operatorMap[match]}-`
-  )//?
-  console.log(filters);
-}
+  if (numericFilters) {
+    const operatorMap = {
+      '>': '$gt',
+      '>=': '$gte',
+      '=': '$eq',
+      '<': '$lt',
+      '<=': '$lte',
+    }//permet de chercher les operateurs de comparaison dans une chaine de caractere 
+    const regEx = /\b(<|>|<=|>=|=)\b/g
+    let filters = numericFilters.replace(regEx, (match) =>
+      `-${operatorMap[match]}-`
+    )//?
+    const options = ['price', 'rating'];
+    filters = filters.split(',').forEach((item) => {
+      const [field, operator, value] = item.split('-')
+      if(options.includes(field)){
+        queryObject[field] = {[operator] : Number(value)}
+      }
+  })
 
 
-  //console.log(queryObject);
+  console.log(queryObject);
 
   let result = Product.find(queryObject); //params in url
 
@@ -65,7 +70,7 @@ if(numericFilters){
   const products = await result;
   res.status(200).json({ products, nbHits: products.length });
 };
-
+}
 
 module.exports = {
   getAllProducts,
